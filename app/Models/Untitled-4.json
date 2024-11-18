@@ -1,0 +1,10 @@
+{"admin":"1|8ofvnEHAjMK5iJDNju8YGzUswxvlSnTwLAmUIpFza0069e96",
+"update":"2|KOfS5qCT1ppeqTcxLv6cuqiGVcJ9JTvDcH2WTHUZ4ac5c7ec",
+"basic":"3|yrqaknbnu9rWMV7nm0lWOMa9Rzxc2J1bzJdEsIce0a46470c"}
+
+
+admin "4|tUaBwFk80yDBakmU9gQFeMwRXx2bAXHu7PkOsFyk781ae8e8"
+update	"5|a3chvX5EomLlJtggTz6CeLrHk8r3OktcYSGYVzSI2b1baa5f"
+basic	"6|4RrLzkBMxjJpU86FCM1uB9FH8XsU1p3GYCx0sI2wf414cf10"
+
+->middleware('auth:sanctum')
