@@ -12,7 +12,7 @@ class QuizPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isSuperAdmin();
     }
 
     /**
@@ -20,7 +20,7 @@ class QuizPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isSuperAdmin();
     }
 
     /**
@@ -28,7 +28,7 @@ class QuizPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isSuperAdmin();
     }
 
     /**
@@ -36,7 +36,7 @@ class QuizPolicy
      */
     public function update(User $user, Quiz $quiz): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isSuperAdmin();
     }
 
     /**
@@ -44,7 +44,7 @@ class QuizPolicy
      */
     public function delete(User $user, Quiz $quiz): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isSuperAdmin();
     }
 
     /**
@@ -52,7 +52,7 @@ class QuizPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isSuperAdmin();
     }
 
     /**
@@ -60,6 +60,6 @@ class QuizPolicy
      */
     public function forceDelete(User $user, User $model): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isSuperAdmin();
     }
 }

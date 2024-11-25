@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-
 use App\Models\User;
 use App\Services\KafedraService;
 use GuzzleHttp\Client;
@@ -12,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use League\OAuth2\Client\Provider\GenericProvider;
 use App\Models\Quiz;
+use Illuminate\Support\Facades\Hash;
 
 class OAuth2Controller extends Controller
 {
@@ -20,27 +20,40 @@ class OAuth2Controller extends Controller
         return view('welcome');
     }
 
-    public function welcome() {
+    public function welcome()
+    {
+      //  if (auth()->user()->role == "ADMIN" || auth()->user()->role == "SUPER_ADMIN") {
+         //   auth()->guard('web')->logout();
+         //   return view('auth.login');
+    //    }
+        $credentials = [
+            'email' => 'admin@example.com',
+            'password' => '12345678'
+        ];
+
+     //   dd($credentials);
+
+
         return view('home', ['featuredQuizzes' => Quiz::latest(column: 'created_date')->take(value: 3)->get()]);
     }
-
 
     public function loginStudent()
     {
         // Create the OAuth2 provider
         $employeeProvider = new GenericProvider([
-            'clientId' => "" . env("STUDENT_ID"),
-            'clientSecret' => "" . env("STUDENT_TOKEN"),
-            'redirectUri' => "" . env("STUDENT_URL"),
-            'urlAuthorize' => '/welcome',
-            'urlAccessToken' => 'https://student.ubtuit.uz/oauth/access-token',
+            'clientId' => '' . env('STUDENT_ID'),
+            'clientSecret' => '' . env('STUDENT_TOKEN'),
+            'redirectUri' => '' . "http://127.0.0.1:8000",
+            'urlAuthorize' => 'http://127.0.0.1:8000/welcome',
+            'urlAccessToken' => 'https://hemis.ubtuit.uz/oauth/access-token',
             'urlResourceOwnerDetails' => 'https://student.ubtuit.uz/oauth/api/user?fields=id,uuid,type,name,login,picture,email,university_id,phone,groups',
             'verify' => false,
         ]);
         $guzzyClient = new Client([
             'defaults' => [
                 \GuzzleHttp\RequestOptions::CONNECT_TIMEOUT => 5,
-                \GuzzleHttp\RequestOptions::ALLOW_REDIRECTS => true],
+                \GuzzleHttp\RequestOptions::ALLOW_REDIRECTS => true,
+            ],
             \GuzzleHttp\RequestOptions::VERIFY => false,
         ]);
 
@@ -55,9 +68,9 @@ class OAuth2Controller extends Controller
     {
         // Create the OAuth2 provider
         $employeeProvider = new GenericProvider([
-            'clientId' => "" . env("TEACHER_ID"),
-            'clientSecret' => "" . env("TEACHER_TOKEN"),
-            'redirectUri' => "" . env("TEACHER_URL"),
+            'clientId' => '' . env('TEACHER_ID'),
+            'clientSecret' => '' . env('TEACHER_TOKEN'),
+            'redirectUri' => '' . env('TEACHER_URL'),
             'urlAuthorize' => 'http://127.0.0.1:8000/admin',
             'urlAccessToken' => 'https://hemis.ubtuit.uz/oauth/access-token',
             'urlResourceOwnerDetails' => 'https://hemis.ubtuit.uz/oauth/api/user?fields=id,uuid,type,roles,name,login,picture,email,university_id,phone',
@@ -66,7 +79,8 @@ class OAuth2Controller extends Controller
         $guzzyClient = new Client([
             'defaults' => [
                 \GuzzleHttp\RequestOptions::CONNECT_TIMEOUT => 5,
-                \GuzzleHttp\RequestOptions::ALLOW_REDIRECTS => true],
+                \GuzzleHttp\RequestOptions::ALLOW_REDIRECTS => true,
+            ],
             \GuzzleHttp\RequestOptions::VERIFY => false,
         ]);
 
@@ -82,10 +96,10 @@ class OAuth2Controller extends Controller
         if ($request->has('code')) {
             // You have received the authorization code, now exchange it for an access token
             $employeeProvider = new GenericProvider([
-                'clientId' => "" . env("STUDENT_ID"),
-                'clientSecret' => "" . env("STUDENT_TOKEN"),
-                'redirectUri' => "" . env("STUDENT_URL"),
-                'urlAuthorize' => 'https://student.ubtuit.uz/oauth/authorize',
+                'clientId' => '' . env('STUDENT_ID'),
+                'clientSecret' => '' . env('STUDENT_TOKEN'),
+                'redirectUri' => '' . "http://127.0.0.1:8000",
+                'urlAuthorize' => 'http://127.0.0.1:8000/welcome',
                 'urlAccessToken' => 'https://student.ubtuit.uz/oauth/access-token',
                 'urlResourceOwnerDetails' => 'https://student.ubtuit.uz/oauth/api/user?fields=id,uuid,type,name,login,picture,email,university_id,phone,groups',
                 'verify' => false,
@@ -93,7 +107,8 @@ class OAuth2Controller extends Controller
             $guzzyClient = new Client([
                 'defaults' => [
                     \GuzzleHttp\RequestOptions::CONNECT_TIMEOUT => 5,
-                    \GuzzleHttp\RequestOptions::ALLOW_REDIRECTS => true],
+                    \GuzzleHttp\RequestOptions::ALLOW_REDIRECTS => true,
+                ],
                 \GuzzleHttp\RequestOptions::VERIFY => false,
             ]);
 
@@ -107,8 +122,8 @@ class OAuth2Controller extends Controller
             // requests against the service provider's API.
             echo "<p>Access Token: <b>{$accessToken->getToken()}</b></p>";
             echo "<p>Refresh Token: <b>{$accessToken->getRefreshToken()}</b></p>";
-            echo "Expired in: <b>" . date('m/d/Y H:i:s', $accessToken->getExpires()) . "</b></p>";
-            echo "Already expired: <b>" . ($accessToken->hasExpired() ? 'expired' : 'not expired') . "</b></p>";
+            echo 'Expired in: <b>' . date('m/d/Y H:i:s', $accessToken->getExpires()) . '</b></p>';
+            echo 'Already expired: <b>' . ($accessToken->hasExpired() ? 'expired' : 'not expired') . '</b></p>';
 
             // Using the access token, we may look up details about the
             // resource owner.
@@ -116,13 +131,13 @@ class OAuth2Controller extends Controller
 
             $data = $resourceOwner->toArray();
 
-//            TODO: callback student save database and login
-            $id = $data["student_id_number"];
+            //            TODO: callback student save database and login
+            $id = $data['student_id_number'];
 
-            $this->save_callback_data($id, $data, "student", "0");
-//            dd($data);
-//            Cookie::queue('user', json_encode($data), 60 * 24);
-//            Cookie::queue('selected_role', "student", 60 * 24);
+            $this->save_callback_data($id, $data, 'student', '0');
+            dd($data);
+            //            Cookie::queue('user', json_encode($data), 60 * 24);
+            //            Cookie::queue('selected_role', "student", 60 * 24);
 
             return redirect()->route('first-page');
         } else {
@@ -135,10 +150,10 @@ class OAuth2Controller extends Controller
         if ($request->has('code')) {
             // You have received the authorization code, now exchange it for an access token
             $employeeProvider = new GenericProvider([
-                'clientId' => "" . env("TEACHER_ID"),
-                'clientSecret' => "" . env("TEACHER_TOKEN"),
-                'redirectUri' => "" . env("TEACHER_URL"),
-                'urlAuthorize' => 'https://hemis.ubtuit.uz/oauth/authorize',
+                'clientId' => '' . env('TEACHER_ID'),
+                'clientSecret' => '' . env('TEACHER_TOKEN'),
+                'redirectUri' => '' . env('TEACHER_URL'),
+                'urlAuthorize' => 'http://127.0.0.1:8000/admin',
                 'urlAccessToken' => 'https://hemis.ubtuit.uz/oauth/access-token',
                 'urlResourceOwnerDetails' => 'https://hemis.ubtuit.uz/oauth/api/user?fields=id,uuid,type,roles,name,login,picture,email,university_id,phone',
                 'verify' => false,
@@ -146,7 +161,8 @@ class OAuth2Controller extends Controller
             $guzzyClient = new Client([
                 'defaults' => [
                     \GuzzleHttp\RequestOptions::CONNECT_TIMEOUT => 5,
-                    \GuzzleHttp\RequestOptions::ALLOW_REDIRECTS => true],
+                    \GuzzleHttp\RequestOptions::ALLOW_REDIRECTS => true,
+                ],
                 \GuzzleHttp\RequestOptions::VERIFY => false,
             ]);
 
@@ -160,8 +176,8 @@ class OAuth2Controller extends Controller
             // requests against the service provider's API.
             echo "<p>Access Token: <b>{$accessToken->getToken()}</b></p>";
             echo "<p>Refresh Token: <b>{$accessToken->getRefreshToken()}</b></p>";
-            echo "Expired in: <b>" . date('m/d/Y H:i:s', $accessToken->getExpires()) . "</b></p>";
-            echo "Already expired: <b>" . ($accessToken->hasExpired() ? 'expired' : 'not expired') . "</b></p>";
+            echo 'Expired in: <b>' . date('m/d/Y H:i:s', $accessToken->getExpires()) . '</b></p>';
+            echo 'Already expired: <b>' . ($accessToken->hasExpired() ? 'expired' : 'not expired') . '</b></p>';
 
             // Using the access token, we may look up details about the
             // resource owner.
@@ -170,17 +186,16 @@ class OAuth2Controller extends Controller
             $data = $resourceOwner->toArray();
 
             //TODO: callback student save database and login
-            $id = $data["employee_id_number"];
-            $role = $data["roles"][0]["code"];
+            $id = $data['employee_id_number'];
+            $role = $data['roles'][0]['code'];
             $kafedra = KafedraService::getKafedraForMudir($id);
             $department = $kafedra[0];
 
-
             $this->save_callback_data($id, $data, $role, $department);
 
-//            dd($data);
-//            Cookie::queue('user', json_encode($data), 60 * 24);
-//            Cookie::queue('selected_role', $role, 60 * 24);
+            //            dd($data);
+            //            Cookie::queue('user', json_encode($data), 60 * 24);
+            //            Cookie::queue('selected_role', $role, 60 * 24);
 
             return redirect()->route('first-page');
         } else {

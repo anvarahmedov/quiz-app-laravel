@@ -12,7 +12,7 @@ class ResultPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isSuperAdmin();
     }
 
     /**
@@ -20,7 +20,7 @@ class ResultPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isSuperAdmin();
     }
 
     /**
@@ -28,7 +28,7 @@ class ResultPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin();
+        return false;
     }
 
     /**
@@ -36,15 +36,15 @@ class ResultPolicy
      */
     public function update(User $user, Result $result): bool
     {
-        return $user->isAdmin();
+        return false;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, User $model): bool
+    public function delete(User $user, Result $result): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isSuperAdmin();
     }
 
     /**
@@ -52,14 +52,14 @@ class ResultPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        return $user->isAdmin();
+        return false;
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, User $model): bool
+    public function forceDelete(User $user,  Result $result): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isSuperAdmin();
     }
 }

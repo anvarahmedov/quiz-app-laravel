@@ -11,9 +11,7 @@ class UpdateQuizRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user = $this->user();
-
-        return $user != null && $user->tokenCan('update');;
+        return true;
     }
 
     /**
@@ -23,8 +21,21 @@ class UpdateQuizRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        $method = $this->method();
+        if ($method == 'PUT') {
+            return [
+                'user_id' => ['required', 'integer'],
+                'slug' => ['required'],
+                'category' => ['required'],
+                'created_date' => ['required', 'date_format:Y-m-d H:i:s'],
+                'featured' => ['required', 'boolean']
+            ];
+        } else {
+            return [
+                'name' => ['sometimes', 'required'],
+                'email' => ['sometimes', 'required', 'email'],
+                'role' => ['sometimes', 'required']
+            ];
+        }
     }
 }

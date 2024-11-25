@@ -14,7 +14,7 @@ class StoreUserRequest extends FormRequest
     {
         $user = $this->user();
 
-        return $user != null && $user->tokenCan('create');
+        return $user->role == "SUPER_ADMIN" || $user->role == "ADMIN";
     }
 
     /**

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Result extends Model
 {
  //   public $quizHasS = false;
-    protected $fillable = ['user_id', 'quiz_id', 'result'];
+    protected $fillable = ['id', 'user_id', 'quiz_id', 'result', 'owner'];
 
     public function owner()
     {

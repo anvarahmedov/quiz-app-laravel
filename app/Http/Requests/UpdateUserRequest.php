@@ -14,7 +14,7 @@ class UpdateUserRequest extends FormRequest
     {
         $user = $this->user();
 
-        return $user != null && $user->tokenCan('create', 'update', 'delete');
+        return $user->role == "SUPER_ADMIN" || $user->role == "ADMIN";
        //return true;
     }
 

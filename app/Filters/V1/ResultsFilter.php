@@ -16,6 +16,7 @@ class ResultsFilter extends ApiFilter {
         'userId' => ['eq', 'ne', 'lt', 'lte', 'gt', 'gte'],
         'result' => ['eq', 'ne', 'lt', 'lte', 'gt', 'gte'],
         'quizId' => ['eq', 'ne','lt', 'lte', 'gt', 'gte'],
+     //   'created_at' => ['eq', 'ne','lt', 'lte', 'gt', 'gte'],
     ];
 
     protected $columnMap = [

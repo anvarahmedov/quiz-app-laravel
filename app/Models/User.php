@@ -13,8 +13,9 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Models\Choice;
 use App\Models\Result;
 use Filament\Panel;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, JWTSubject
 {
     use HasApiTokens;
 
@@ -32,8 +33,24 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->can('viewAdmin', User::class);
+        return $this->can('viewAdmin', User::class) || $this->can('viewSuperAdmin', User::class);
     }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
     protected $fillable = [
         'name',
         'email',
@@ -45,9 +62,13 @@ class User extends Authenticatable implements FilamentUser
         return $this->role === self::ROLE_ADMIN;
     }
 
+    public function isSuperAdmin() {
+        return $this->role === self::ROLE_SUPER_ADMIN;
+    }
+
     const ROLE_ADMIN = 'ADMIN';
 
-    const ROLE_EDITOR = 'EDITOR';
+    const ROLE_SUPER_ADMIN = 'SUPER_ADMIN';
 
     const ROLE_USER = 'USER';
 
@@ -55,7 +76,8 @@ class User extends Authenticatable implements FilamentUser
 
     const ROLES = [
         self:: ROLE_ADMIN => 'Admin',
-        self:: ROLE_USER => 'User'
+        self:: ROLE_USER => 'User',
+        self::ROLE_SUPER_ADMIN => 'Super_Admin'
     ];
 
     /**

@@ -21,7 +21,7 @@ class UserController extends Controller
         $includeQuizzes = $request->query('includeQuizzes');
         $users = User::where($filterItems);
         if ($includeQuizzes) {
-            $customers = $users->with('quizzes');
+            $users = $users->with('quizzes');
         }
         return new UserCollection($users->paginate()->appends($request->query()));
     }

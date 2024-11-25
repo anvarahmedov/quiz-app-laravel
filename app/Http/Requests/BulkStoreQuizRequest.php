@@ -14,9 +14,9 @@ class BulkStoreQuizRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user = $this->user();
+      //  $user = $this->user();
 
-        return $user != null && $user->tokenCan('create');
+        return true;
     }
 
     /**

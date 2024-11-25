@@ -20,12 +20,20 @@ class ResultController extends Controller
     {
         $filter = new ResultsFilter();
         $queryItems = $filter->transform(request());
+        $includeLatest = request()->query('includeLatest');
+
+
 
         if (count($queryItems) == 0) {
             return new ResultCollection(Result::paginate());
         } else {
-            $invoices = Result::where($queryItems)->paginate();
-            return new ResultCollection($invoices->appends(request()->query()));
+
+            $results = Result::where($queryItems)->paginate();
+            if ($includeLatest) {
+             //   $results = Result::orderBy('id', 'ASC')->get();
+            }
+
+            return new ResultCollection($results->appends(request()->query()));
         }
     }
 

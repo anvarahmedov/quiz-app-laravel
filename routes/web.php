@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\IsSuperAdminMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\QuestionController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\MixController;
 use App\Http\Controllers\HemisController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\AuthController;
 
 
 
@@ -43,39 +45,48 @@ use Illuminate\Http\Request;
 Route::get('/setup', function() {
 
 
-    $credentials = [
-         'email' => 'admin@example.com',
-         'password' => '12345678'
-     ];
+
+   // $credentials = [
+ //        'email' => 'admin@example.com',
+   //      'password' => '12345678'
+ //    ];
 
   //   dd($credentials);
 
-     if(!Auth::attempt($credentials)) {
+  //   if(!Auth::attempt($credentials)) {
   //       dd(vars: 'ewew');
-         $user = new App\Models\User();
+     //    $user = new App\Models\User();
 
-         $user->name = 'Admin_2';
-         $user->role = 'ADMIN';
-         $user->email = $credentials['email'];
-         $user->password = Hash::make($credentials['password']);
+    //     $user->name = 'Admin_2';
+     //    $user->role = 'ADMIN';
+     //    $user->email = $credentials['email'];
+    //     $user->password = Hash::make($credentials['password']);
 
-         $user->save();
+   //      $user->save();
 
-         if(Auth::attempt($credentials)) {
-             $user = auth()->user();
+    //     if(Auth::attempt($credentials)) {
+   //          $user = auth()->user();
 
-             $adminToken = $user->createToken('admin-token', ['create', 'update', 'delete']);
-             $updateToken = $user->createToken('update-token', ['create', 'update']);
-             $basicToken = $user->createToken('basic-token');
+    //         $adminToken = $user->createToken('admin-token', ['create', 'update', 'delete']);
+    //         $updateToken = $user->createToken('update-token', ['create', 'update']);
+    //         $basicToken = $user->createToken('basic-token');
 
-             return [
-                 'admin' => $adminToken->plainTextToken,
-                 'update' => $updateToken->plainTextToken,
-                 'basic' => $basicToken->plainTextToken
-             ];
-         }
-     }
- });
+   //          return [
+     //            'admin' => $adminToken->plainTextToken,
+        //         'update' => $updateToken->plainTextToken,
+      //           'basic' => $basicToken->plainTextToken
+    //         ];
+    //     }
+
+  //  }
+
+    $user = auth()->user();
+    $superAdminToken = $user->createToken('super-admin-token');
+    return [
+        'superAdmin' => $superAdminToken->plainTextToken,
+    ];
+
+ })->middleware(IsSuperAdminMiddleware::class);
 
 
 
@@ -94,6 +105,7 @@ Route::post('/answer/{id}', [CheckResultsController::class, 'answer'])->name('ma
 Route::post('/addpoints/{id}', [CheckResultsController::class, 'addPointsToResult'])->name('add_points');
 Route::post('/started/{id}', [CheckResultsController::class, 'quizHasStarted'])->name('quizHasStarted');
 
+Route::get('webLogout', [AuthController::class, 'logoutForWeb']);
 //Route::get('/language/{locale}', function($locale) {
  //   if(array_key_exists($locale, config('app.supported_locales'))) {
  //       session()->put('locale', $locale);
