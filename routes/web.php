@@ -80,11 +80,16 @@ Route::get('/setup', function() {
 
   //  }
 
-    $user = auth()->user();
-    $superAdminToken = $user->createToken('super-admin-token');
-    return [
-        'superAdmin' => $superAdminToken->plainTextToken,
-    ];
+   // $user = auth()->user();
+  //  $superAdminToken = $user->createToken('super-admin-token');
+  //  if (auth()->user()->tokens()) {
+  //    return [
+  //      'superAdmin' => auth()->user()->tokens()->plainTextToken,
+  //    ];
+   // }
+  //  return [
+ //       'superAdmin' => $superAdminToken->plainTextToken,
+ //   ];
 
  })->middleware(IsSuperAdminMiddleware::class);
 
