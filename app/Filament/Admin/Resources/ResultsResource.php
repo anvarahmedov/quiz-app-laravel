@@ -42,7 +42,7 @@ class ResultsResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('owner.name')
-                    ->searchable(),
+                    ->searchable()->default('deleted_account'),
                     Tables\Columns\TextColumn::make('quiz.category')
                     ->searchable(),
                     Tables\Columns\TextColumn::make('created_at')
