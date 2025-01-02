@@ -33,7 +33,7 @@ Route::get('/log.student', function() {
     return view('auth.login');
 });
 
-Route::get('/welcome', [\App\Http\Controllers\OAuth2Controller::class, 'welcome'])->name('home')->middleware('auth:sanctum');
+Route::get('/welcome', [\App\Http\Controllers\OAuth2Controller::class, 'welcome'])->name('home_welcome')->middleware('auth:sanctum');
 
 use Illuminate\Http\Request;
 

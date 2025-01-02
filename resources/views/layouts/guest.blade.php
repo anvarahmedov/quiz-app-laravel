@@ -15,14 +15,14 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        <!-- Styles -->
-        @livewireStyles
+            @livewireStyles
+
     </head>
     <body>
         <x-banner />
 
     <div class="min-h-screen bg-gray-100">
-        
+
         @include('layouts.partials.header')
 
         <div class="font-sans text-gray-900 antialiased">
@@ -32,7 +32,7 @@
 
         @livewireScripts
 
-
+  
     </body>
 
 

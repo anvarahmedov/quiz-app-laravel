@@ -30,12 +30,13 @@
                     autocomplete="current-password" />
             </div>
 
-            <div class="block mt-4">
-                <label for="remember_me" class="flex place-items-start">
-                    <x-checkbox id="remember_me" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600">{{ __('Eslab qolish') }}</span>
-                </label>
+
+            <div class="form-group mt-3">
+            {!! NoCaptcha::renderJs('uz', false, 'onloadCallBack') !!}
+            {!! NoCaptcha::display() !!}
             </div>
+
+
 
             <div class="flex items-center justify-end mt-4">
                 @if (Route::has('password.request'))
@@ -48,10 +49,17 @@
                 <x-button class="ms-4">
                     {{ __('Kirish') }}
                 </x-button>
+
+
+
+
             </div>
+
         </form>
     </x-authentication-card>
 </x-guest-layout>
+
+
 
 
 
@@ -89,6 +97,11 @@
 //    @endif
 
 </script>
+<script>
+    var onloadCallBack = function() {
+        alert('grecaptcha is ready!');
+    }
+    </script>
 </body>
 </html>
 

@@ -26,10 +26,10 @@ class OAuth2Controller extends Controller
          //   auth()->guard('web')->logout();
          //   return view('auth.login');
     //    }
-        $credentials = [
-            'email' => 'admin@example.com',
-            'password' => '12345678'
-        ];
+      //  $credentials = [
+    //        'email' => 'admin@example.com',
+    //        'password' => '12345678'
+    //    ];
 
      //   dd($credentials);
 
@@ -37,14 +37,23 @@ class OAuth2Controller extends Controller
         return view('home', ['featuredQuizzes' => Quiz::latest(column: 'created_date')->take(value: 3)->get()]);
     }
 
-    public function loginStudent()
+    public function loginStudent(Request $request)
     {
+
+
+        
+
+        if (Auth::check()) {
+            $urlAuthorize = 'http://127.0.0.1:8000/welcome';
+        } else {
+            $urlAuthorize = 'http://127.0.0.1:8000/login';
+        }
         // Create the OAuth2 provider
         $employeeProvider = new GenericProvider([
             'clientId' => '' . env('STUDENT_ID'),
             'clientSecret' => '' . env('STUDENT_TOKEN'),
-            'redirectUri' => '' . "http://127.0.0.1:8000",
-            'urlAuthorize' => 'http://127.0.0.1:8000/welcome',
+            'redirectUri' => '' . "http://127.0.0.1:8000/welcome",
+            'urlAuthorize' => $urlAuthorize,
             'urlAccessToken' => 'https://hemis.ubtuit.uz/oauth/access-token',
             'urlResourceOwnerDetails' => 'https://student.ubtuit.uz/oauth/api/user?fields=id,uuid,type,name,login,picture,email,university_id,phone,groups',
             'verify' => false,
@@ -61,6 +70,10 @@ class OAuth2Controller extends Controller
 
         // Redirect the user to the authorization URL
         $authorizationUrl = $employeeProvider->getAuthorizationUrl();
+      //  $redirectUri = $employeeProvider->getRedirectUri();
+        //return dd('s');
+        //dd($request);
+       // $this->callStudent(request());
         return redirect()->away($authorizationUrl);
     }
 
@@ -98,8 +111,8 @@ class OAuth2Controller extends Controller
             $employeeProvider = new GenericProvider([
                 'clientId' => '' . env('STUDENT_ID'),
                 'clientSecret' => '' . env('STUDENT_TOKEN'),
-                'redirectUri' => '' . "http://127.0.0.1:8000",
-                'urlAuthorize' => 'http://127.0.0.1:8000/welcome',
+                'redirectUri' => '' . "http://127.0.0.1:8000/welcome",
+                'urlAuthorize' => 'http://127.0.0.1:8000/login',
                 'urlAccessToken' => 'https://student.ubtuit.uz/oauth/access-token',
                 'urlResourceOwnerDetails' => 'https://student.ubtuit.uz/oauth/api/user?fields=id,uuid,type,name,login,picture,email,university_id,phone,groups',
                 'verify' => false,
@@ -135,13 +148,14 @@ class OAuth2Controller extends Controller
             $id = $data['student_id_number'];
 
             $this->save_callback_data($id, $data, 'student', '0');
-            dd($data);
+            //dd($data);
+            dd('2');
             //            Cookie::queue('user', json_encode($data), 60 * 24);
             //            Cookie::queue('selected_role', "student", 60 * 24);
 
-            return redirect()->route('first-page');
+          // return redirect('http://127.0.0.1:8000/');
         } else {
-            return redirect()->route('login-page');
+            return redirect()->route('home');
         }
     }
 

@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(IsSuperAdminMiddleware::class);
+        //$middleware->append(\App\Http\Middleware\SetCspHeader::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
